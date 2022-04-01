@@ -20,7 +20,7 @@ class TransactionStatus {
 			":failure_reason" => $failure_reason,
 			":end_time" => $end_time,
 			":time" => time()
-		]);		
+		]);
 		return $this->database->lastInsertId();
 	}
 

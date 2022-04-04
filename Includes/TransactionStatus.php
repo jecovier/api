@@ -8,14 +8,17 @@ class TransactionStatus {
 	public function __construct($database) {
 		$this->database = $database;
 	}
-
-	public function add($status,$moduleName,$eventName) {
-		$sql = "INSERT INTO api_asynchronous_transaction_history (`module_name`,`event_name`, `event_status`, `process_start_time`) VALUES (:module_name,:event_name, :event_status, :time)";
+	
+	public function add($status, $moduleName, $eventName, $failure_reason ='', $end_time = null) {
+		$end_time = !empty($end_time) ? $end_time : time();
+		$sql = "INSERT INTO api_asynchronous_transaction_history (`module_name`,`event_name`, `event_status`, `failure_reason`, `process_end_time`, `process_start_time`) VALUES (:module_name,:event_name, :event_status, :failure_reason, :end_time, :time)";
 		$sth = $this->database->prepare($sql);
 		$sth->execute([
 			":module_name" => $moduleName,
 			":event_name" => $eventName,
 			":event_status" => $status,
+			":failure_reason" => $failure_reason,
+			":end_time" => $end_time,
 			":time" => time()
 		]);
 		return $this->database->lastInsertId();
